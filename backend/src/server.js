@@ -112,9 +112,11 @@ app.get('/api', (req, res) => {
 // API routes
 const authRoutes = require('./routes/authRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const searchRoutes = require('./routes/searchRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/search', searchRoutes);
 
 // Additional routes will be added here
 // app.use('/api/users', userRoutes);
