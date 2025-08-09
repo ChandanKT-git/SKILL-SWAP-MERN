@@ -168,6 +168,28 @@
         <div id="currentUserResponse" class="response"></div>
     </div>
 
+    <!-- Profile Management -->
+    <div class="container">
+        <h2>Profile Management</h2>
+        <button onclick="testGetProfile()">Get My Profile</button>
+        <button onclick="testUpdateProfile()">Update Profile</button>
+        <button onclick="testAddSkill()">Add Skill</button>
+        <button onclick="testGetSkills()">Get My Skills</button>
+        <div id="profileResponse" class="response"></div>
+    </div>
+
+    <!-- Profile Image Upload -->
+    <div class="container">
+        <h2>Profile Image Upload</h2>
+        <div class="form-group">
+            <label>Profile Image:</label>
+            <input type="file" id="profileImage" accept="image/*">
+        </div>
+        <button onclick="testUploadImage()">Upload Image</button>
+        <button onclick="testRemoveImage()">Remove Image</button>
+        <div id="imageResponse" class="response"></div>
+    </div>
+
     <script>
         const API_BASE = 'http://localhost:5002';
 
@@ -278,6 +300,153 @@
             });
 
             displayResponse('currentUserResponse', response);
+        }
+
+        async function testGetProfile() {
+            const token = document.getElementById('accessToken').value;
+
+            if (!token) {
+                displayResponse('profileResponse', { error: 'Please provide an access token' });
+                return;
+            }
+
+            const response = await makeRequest(`${API_BASE}/api/profile`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            displayResponse('profileResponse', response);
+        }
+
+        async function testUpdateProfile() {
+            const token = document.getElementById('accessToken').value;
+
+            if (!token) {
+                displayResponse('profileResponse', { error: 'Please provide an access token' });
+                return;
+            }
+
+            const data = {
+                bio: 'Updated bio from API test',
+                location: {
+                    city: 'San Francisco',
+                    state: 'California',
+                    country: 'USA'
+                },
+                availability: {
+                    timezone: 'America/Los_Angeles',
+                    preferredDays: ['monday', 'tuesday', 'wednesday'],
+                    isAvailable: true
+                }
+            };
+
+            const response = await makeRequest(`${API_BASE}/api/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('profileResponse', response);
+        }
+
+        async function testAddSkill() {
+            const token = document.getElementById('accessToken').value;
+
+            if (!token) {
+                displayResponse('profileResponse', { error: 'Please provide an access token' });
+                return;
+            }
+
+            const data = {
+                name: 'JavaScript',
+                level: 'advanced',
+                category: 'Programming',
+                description: 'Frontend and backend development',
+                yearsOfExperience: 3
+            };
+
+            const response = await makeRequest(`${API_BASE}/api/profile/skills`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('profileResponse', response);
+        }
+
+        async function testGetSkills() {
+            const token = document.getElementById('accessToken').value;
+
+            if (!token) {
+                displayResponse('profileResponse', { error: 'Please provide an access token' });
+                return;
+            }
+
+            const response = await makeRequest(`${API_BASE}/api/profile/skills`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            displayResponse('profileResponse', response);
+        }
+
+        async function testUploadImage() {
+            const token = document.getElementById('accessToken').value;
+            const fileInput = document.getElementById('profileImage');
+
+            if (!token) {
+                displayResponse('imageResponse', { error: 'Please provide an access token' });
+                return;
+            }
+
+            if (!fileInput.files[0]) {
+                displayResponse('imageResponse', { error: 'Please select an image file' });
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('profileImage', fileInput.files[0]);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/profile/image`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                displayResponse('imageResponse', { status: response.status, data });
+            } catch (error) {
+                displayResponse('imageResponse', { error: error.message });
+            }
+        }
+
+        async function testRemoveImage() {
+            const token = document.getElementById('accessToken').value;
+
+            if (!token) {
+                displayResponse('imageResponse', { error: 'Please provide an access token' });
+                return;
+            }
+
+            const response = await makeRequest(`${API_BASE}/api/profile/image`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            displayResponse('imageResponse', response);
         }
     </script>
 </body>
