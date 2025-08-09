@@ -35,7 +35,10 @@
   - Write unit tests for authentication utilities using Jest 29+
   - _Requirements: 1.1, 1.2, 2.1, 2.4_
 
-- [ ] 4. Build user registration and email verification system
+- [x] 4. Build user registration and email verification system
+
+
+
   - Create registration API endpoint with Joi 17+ input validation
   - Implement email service for OTP delivery using nodemailer 6+
   - Build OTP verification endpoint with expiration handling
@@ -43,7 +46,10 @@
   - Write integration tests for registration flow using Supertest 6+
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 5. Implement user login and JWT authentication
+- [x] 5. Implement user login and JWT authentication
+
+
+
   - Create login API endpoint with credential validation
   - Implement JWT token generation and refresh mechanism
   - Build authentication middleware for protected routes

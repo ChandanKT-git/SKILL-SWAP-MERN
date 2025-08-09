@@ -33,7 +33,13 @@ app.use(helmet({
 }));
 
 app.use(cors({
-    origin: config.frontendUrl,
+    origin: [
+        config.frontendUrl,
+        'http://127.0.0.1:5500',
+        'http://localhost:5500',
+        'http://127.0.0.1:5501',
+        'http://localhost:5501'
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -58,6 +64,9 @@ app.use('/api/', limiter);
 // Logging middleware
 const loggingMiddleware = getLoggingMiddleware();
 loggingMiddleware.forEach(middleware => app.use(middleware));
+
+// Static file serving for testing
+app.use(express.static('public'));
 
 // Body parsing middleware
 app.use(express.json({
@@ -100,8 +109,11 @@ app.get('/api', (req, res) => {
     });
 });
 
-// API routes will be added here
-// app.use('/api/auth', authRoutes);
+// API routes
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+
+// Additional routes will be added here
 // app.use('/api/users', userRoutes);
 // app.use('/api/sessions', sessionRoutes);
 
