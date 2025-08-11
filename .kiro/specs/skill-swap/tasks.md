@@ -71,7 +71,9 @@
 
 
 
-- [ ] 6. Create user profile management system
+- [x] 6. Create user profile management system
+
+
   - Implement profile data models for skills and personal information
   - Build profile CRUD API endpoints (create, read, update)
   - Integrate Cloudinary service for profile image uploads
@@ -89,7 +91,11 @@
   - Write tests for search functionality and edge cases
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 8. Implement session booking and management system
+- [x] 8. Implement session booking and management system
+
+
+
+
   - Create Session model with booking status management
   - Build session booking API endpoint with conflict detection
   - Implement session response system (accept/reject)
