@@ -1,6 +1,6 @@
 const express = require('express');
 const SessionController = require('../controllers/sessionController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authenticateToken } = require('../middleware/authMiddleware');
 const { handleJoiError } = require('../middleware/errorHandler');
 const Joi = require('joi');
 
@@ -163,7 +163,7 @@ const validateObjectId = (paramName) => {
 // @desc    Create a new session booking request
 // @access  Private
 router.post('/',
-    authMiddleware,
+    authenticateToken,
     validate(createSessionSchema),
     SessionController.createSession
 );
@@ -172,7 +172,7 @@ router.post('/',
 // @desc    Get user's sessions with filtering
 // @access  Private
 router.get('/',
-    authMiddleware,
+    authenticateToken,
     validateQuery(getUserSessionsSchema),
     SessionController.getUserSessions
 );
@@ -181,7 +181,7 @@ router.get('/',
 // @desc    Get upcoming sessions for a user
 // @access  Private
 router.get('/upcoming',
-    authMiddleware,
+    authenticateToken,
     validateQuery(getUpcomingSessionsSchema),
     SessionController.getUpcomingSessions
 );
@@ -190,7 +190,7 @@ router.get('/upcoming',
 // @desc    Get session statistics for a user
 // @access  Private
 router.get('/stats',
-    authMiddleware,
+    authenticateToken,
     SessionController.getSessionStats
 );
 
@@ -198,7 +198,7 @@ router.get('/stats',
 // @desc    Check for scheduling conflicts
 // @access  Private
 router.post('/check-conflicts',
-    authMiddleware,
+    authenticateToken,
     validate(checkConflictsSchema),
     SessionController.checkConflicts
 );
@@ -207,7 +207,7 @@ router.post('/check-conflicts',
 // @desc    Get a specific session by ID
 // @access  Private
 router.get('/:sessionId',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('sessionId'),
     SessionController.getSession
 );
@@ -216,7 +216,7 @@ router.get('/:sessionId',
 // @desc    Respond to a session request (accept/decline)
 // @access  Private
 router.put('/:sessionId/respond',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('sessionId'),
     validate(respondToSessionSchema),
     SessionController.respondToSession
@@ -226,7 +226,7 @@ router.put('/:sessionId/respond',
 // @desc    Propose alternative time for a session
 // @access  Private
 router.post('/:sessionId/alternative-time',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('sessionId'),
     validate(alternativeTimeSchema),
     SessionController.proposeAlternativeTime
@@ -236,7 +236,7 @@ router.post('/:sessionId/alternative-time',
 // @desc    Cancel a session
 // @access  Private
 router.put('/:sessionId/cancel',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('sessionId'),
     validate(cancelSessionSchema),
     SessionController.cancelSession
@@ -246,7 +246,7 @@ router.put('/:sessionId/cancel',
 // @desc    Mark session as completed
 // @access  Private
 router.put('/:sessionId/complete',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('sessionId'),
     validate(completeSessionSchema),
     SessionController.completeSession
@@ -256,7 +256,7 @@ router.put('/:sessionId/complete',
 // @desc    Submit feedback for a completed session
 // @access  Private
 router.post('/:sessionId/feedback',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('sessionId'),
     validate(feedbackSchema),
     SessionController.submitFeedback

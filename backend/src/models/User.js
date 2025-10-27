@@ -209,6 +209,34 @@ const userSchema = new Schema({
             default: false,
         },
     },
+
+    // Notification Preferences
+    notificationPreferences: {
+        session: {
+            inApp: { type: Boolean, default: true },
+            email: { type: Boolean, default: true },
+            sms: { type: Boolean, default: false },
+            push: { type: Boolean, default: true }
+        },
+        review: {
+            inApp: { type: Boolean, default: true },
+            email: { type: Boolean, default: true },
+            sms: { type: Boolean, default: false },
+            push: { type: Boolean, default: true }
+        },
+        system: {
+            inApp: { type: Boolean, default: true },
+            email: { type: Boolean, default: true },
+            sms: { type: Boolean, default: false },
+            push: { type: Boolean, default: false }
+        },
+        social: {
+            inApp: { type: Boolean, default: true },
+            email: { type: Boolean, default: false },
+            sms: { type: Boolean, default: false },
+            push: { type: Boolean, default: true }
+        }
+    },
 }, {
     timestamps: true, // Adds createdAt and updatedAt
     toJSON: {

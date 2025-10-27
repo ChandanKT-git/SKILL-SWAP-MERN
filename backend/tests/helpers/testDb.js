@@ -32,12 +32,20 @@ const connectTestDB = async () => {
  */
 const clearTestDB = async () => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            console.warn('⚠️ Database not connected, skipping cleanup');
+            return;
+        }
+
         const collections = mongoose.connection.collections;
 
-        for (const key in collections) {
+        // Clear collections in parallel for better performance
+        const clearPromises = Object.keys(collections).map(async (key) => {
             const collection = collections[key];
             await collection.deleteMany({});
-        }
+        });
+
+        await Promise.all(clearPromises);
     } catch (error) {
         console.error('❌ Failed to clear test database:', error.message);
         throw error;

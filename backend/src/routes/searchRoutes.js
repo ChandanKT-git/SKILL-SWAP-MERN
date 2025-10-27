@@ -1,6 +1,6 @@
 const express = require('express');
 const SearchController = require('../controllers/searchController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authenticateToken } = require('../middleware/authMiddleware');
 const Joi = require('joi');
 
 const router = express.Router();
@@ -156,7 +156,7 @@ router.get('/trending',
 // @desc    Get specific user profile for search results
 // @access  Public
 router.get('/user/:userId',
-    authMiddleware,
+    authenticateToken,
     async (req, res, next) => {
         try {
             const { userId } = req.params;

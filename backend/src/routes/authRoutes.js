@@ -8,7 +8,7 @@ const {
     resendOTPSchema,
     refreshTokenSchema,
 } = require('../validation/authValidation');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authenticateToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -73,13 +73,13 @@ router.post('/refresh-token', validate(refreshTokenSchema), AuthController.refre
  * @desc User logout (client-side token removal)
  * @access Private
  */
-router.post('/logout', authMiddleware, AuthController.logout);
+router.post('/logout', authenticateToken, AuthController.logout);
 
 /**
  * @route GET /api/auth/me
  * @desc Get current user profile
  * @access Private
  */
-router.get('/me', authMiddleware, AuthController.getCurrentUser);
+router.get('/me', authenticateToken, AuthController.getCurrentUser);
 
 module.exports = router;

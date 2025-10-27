@@ -257,9 +257,11 @@ const authRateLimit = (maxAttempts = 5, windowMs = 15 * 60 * 1000) => {
     };
 };
 
-module.exports = authMiddleware;
-module.exports.authorize = authorize;
-module.exports.requireEmailVerification = requireEmailVerification;
-module.exports.optionalAuth = optionalAuth;
-module.exports.requireOwnership = requireOwnership;
-module.exports.authRateLimit = authRateLimit;
+module.exports = {
+    authenticateToken: authMiddleware,
+    authorize,
+    requireEmailVerification,
+    optionalAuth,
+    requireOwnership,
+    authRateLimit
+};

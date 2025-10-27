@@ -1,6 +1,6 @@
 const express = require('express');
 const ProfileController = require('../controllers/profileController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authenticateToken } = require('../middleware/authMiddleware');
 const { uploadSingle, cleanupOnError } = require('../middleware/upload');
 const { handleJoiError } = require('../middleware/errorHandler');
 const {
@@ -82,28 +82,28 @@ const validateObjectId = (paramName = 'userId') => {
  * @desc Get current user's profile
  * @access Private
  */
-router.get('/', authMiddleware, ProfileController.getProfile);
+router.get('/', authenticateToken, ProfileController.getProfile);
 
 /**
  * @route PUT /api/profile
  * @desc Update current user's profile
  * @access Private
  */
-router.put('/', authMiddleware, validate(updateProfileSchema), ProfileController.updateProfile);
+router.put('/', authenticateToken, validate(updateProfileSchema), ProfileController.updateProfile);
 
 /**
  * @route GET /api/profile/skills
  * @desc Get current user's skills
  * @access Private
  */
-router.get('/skills', authMiddleware, ProfileController.getSkills);
+router.get('/skills', authenticateToken, ProfileController.getSkills);
 
 /**
  * @route POST /api/profile/skills
  * @desc Add skill to current user's profile
  * @access Private
  */
-router.post('/skills', authMiddleware, validate(addSkillSchema), ProfileController.addSkill);
+router.post('/skills', authenticateToken, validate(addSkillSchema), ProfileController.addSkill);
 
 /**
  * @route PUT /api/profile/skills/:skillId
@@ -112,7 +112,7 @@ router.post('/skills', authMiddleware, validate(addSkillSchema), ProfileControll
  */
 router.put(
     '/skills/:skillId',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('skillId'),
     validate(updateSkillSchema),
     ProfileController.updateSkill
@@ -125,7 +125,7 @@ router.put(
  */
 router.delete(
     '/skills/:skillId',
-    authMiddleware,
+    authenticateToken,
     validateObjectId('skillId'),
     ProfileController.removeSkill
 );
@@ -137,7 +137,7 @@ router.delete(
  */
 router.post(
     '/image',
-    authMiddleware,
+    authenticateToken,
     cleanupOnError,
     uploadSingle('profileImage'),
     ProfileController.uploadProfileImage
@@ -148,7 +148,7 @@ router.post(
  * @desc Remove profile image
  * @access Private
  */
-router.delete('/image', authMiddleware, ProfileController.removeProfileImage);
+router.delete('/image', authenticateToken, ProfileController.removeProfileImage);
 
 /**
  * @route GET /api/profile/:userId

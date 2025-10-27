@@ -114,11 +114,17 @@ const authRoutes = require('./routes/authRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const searchRoutes = require('./routes/searchRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const notificationRoutes = require('./routes/notifications');
+const adminRoutes = require('./routes/adminRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Additional routes will be added here
 // app.use('/api/users', userRoutes);
@@ -136,12 +142,16 @@ app.use(globalErrorHandler);
 // Graceful shutdown handling
 process.on('SIGTERM', async () => {
     console.log('🛑 SIGTERM received, shutting down gracefully...');
+    const notificationProcessor = require('./jobs/notificationProcessor');
+    notificationProcessor.stop();
     await database.disconnect();
     process.exit(0);
 });
 
 process.on('SIGINT', async () => {
     console.log('🛑 SIGINT received, shutting down gracefully...');
+    const notificationProcessor = require('./jobs/notificationProcessor');
+    notificationProcessor.stop();
     await database.disconnect();
     process.exit(0);
 });
@@ -151,6 +161,10 @@ async function startServer() {
     try {
         // Connect to database
         await database.connect();
+
+        // Start notification processor
+        const notificationProcessor = require('./jobs/notificationProcessor');
+        notificationProcessor.start();
 
         // Start HTTP server
         const server = app.listen(config.port, () => {
