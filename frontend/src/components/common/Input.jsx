@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 import { cn } from '../../utils/helpers';
 
 const Input = forwardRef(({
@@ -6,18 +6,23 @@ const Input = forwardRef(({
     error,
     helperText,
     className = '',
+    id: providedId,
     ...props
 }, ref) => {
+    const generatedId = useId();
+    const inputId = providedId || generatedId;
+
     return (
         <div className="space-y-1">
             {label && (
-                <label className="block text-sm font-medium text-gray-700">
+                <label htmlFor={inputId} className="block text-sm font-medium text-gray-700">
                     {label}
                     {props.required && <span className="text-red-500 ml-1">*</span>}
                 </label>
             )}
             <input
                 ref={ref}
+                id={inputId}
                 className={cn(
                     'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors',
                     error

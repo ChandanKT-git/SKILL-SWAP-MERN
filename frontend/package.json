@@ -38,6 +38,9 @@
         "tailwind-merge": "^2.0.0"
     },
     "devDependencies": {
+        "@babel/core": "^7.28.5",
+        "@babel/preset-env": "^7.28.5",
+        "@babel/preset-react": "^7.28.5",
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.10",
         "@testing-library/jest-dom": "^6.1.4",
@@ -47,6 +50,7 @@
         "@types/react-dom": "^18.2.15",
         "@vitejs/plugin-react": "^4.1.1",
         "autoprefixer": "^10.4.16",
+        "babel-jest": "^30.2.0",
         "eslint": "^8.52.0",
         "eslint-plugin-react": "^7.33.2",
         "eslint-plugin-react-hooks": "^4.6.0",
@@ -68,8 +72,17 @@
         "setupFilesAfterEnv": [
             "<rootDir>/src/setupTests.js"
         ],
-        "moduleNameMapping": {
+        "moduleNameMapper": {
             "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+        },
+        "transform": {
+            "^.+\\.(js|jsx)$": "babel-jest"
+        },
+        "extensionsToTreatAsEsm": [
+            ".jsx"
+        ],
+        "globals": {
+            "NODE_ENV": "test"
         },
         "collectCoverageFrom": [
             "src/**/*.{js,jsx}",
