@@ -23,6 +23,7 @@
     "author": "SkillSwap Team",
     "license": "MIT",
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "@tanstack/react-query": "^4.36.1",
         "axios": "^1.6.0",
         "clsx": "^2.0.0",

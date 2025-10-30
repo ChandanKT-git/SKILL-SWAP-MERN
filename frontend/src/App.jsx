@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import ProfileEdit from './pages/ProfileEdit';
 import SkillsManager from './pages/SkillsManager';
+import Search from './pages/Search';
 import './App.css';
 
 function App() {
@@ -69,6 +70,12 @@ function App() {
                         <ProtectedRoute>
                             <Header />
                             <SkillsManager />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/search" element={
+                        <ProtectedRoute>
+                            <Header />
+                            <Search />
                         </ProtectedRoute>
                     } />
 
