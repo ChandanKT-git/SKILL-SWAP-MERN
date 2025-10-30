@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import ProfileEdit from './pages/ProfileEdit';
 import SkillsManager from './pages/SkillsManager';
 import Search from './pages/Search';
+import Sessions from './pages/Sessions';
 import './App.css';
 
 function App() {
@@ -76,6 +77,12 @@ function App() {
                         <ProtectedRoute>
                             <Header />
                             <Search />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/sessions" element={
+                        <ProtectedRoute>
+                            <Header />
+                            <Sessions />
                         </ProtectedRoute>
                     } />
 
