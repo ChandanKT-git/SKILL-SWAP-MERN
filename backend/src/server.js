@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const http = require('http');
 
 // Import configuration and utilities
 const config = require('./config');
@@ -13,6 +14,7 @@ const {
     handleJoiError
 } = require('./middleware/errorHandler');
 const EnvManager = require('./utils/env');
+const socketService = require('./services/socketService');
 
 const app = express();
 
@@ -117,6 +119,7 @@ const sessionRoutes = require('./routes/sessionRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const notificationRoutes = require('./routes/notifications');
 const adminRoutes = require('./routes/adminRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
@@ -125,6 +128,7 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/chats', chatRoutes);
 
 // Additional routes will be added here
 // app.use('/api/users', userRoutes);
@@ -166,8 +170,14 @@ async function startServer() {
         const notificationProcessor = require('./jobs/notificationProcessor');
         notificationProcessor.start();
 
+        // Create HTTP server
+        const server = http.createServer(app);
+
+        // Initialize Socket.io
+        socketService.initialize(server);
+
         // Start HTTP server
-        const server = app.listen(config.port, () => {
+        server.listen(config.port, () => {
             console.log(`🚀 Server running on port ${config.port}`);
             console.log(`📊 Health check: http://localhost:${config.port}/health`);
             console.log(`🌍 Environment: ${config.nodeEnv}`);

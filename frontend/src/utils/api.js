@@ -122,4 +122,16 @@ export const adminAPI = {
     exportUserData: (params) => api.get('/admin/export/users', { params }),
 };
 
+export const chatAPI = {
+    getUserChats: (params) => api.get('/chat/chats', { params }),
+    getChatById: (chatId, params) => api.get(`/chat/chats/${chatId}`, { params }),
+    createDirectChat: (otherUserId, sessionId) => api.post('/chat/direct', { otherUserId, sessionId }),
+    sendMessage: (chatId, content, messageType = 'text') => api.post(`/chat/chats/${chatId}/messages`, { content, messageType }),
+    deleteMessage: (chatId, messageId) => api.delete(`/chat/chats/${chatId}/messages/${messageId}`),
+    archiveChat: (chatId) => api.put(`/chat/chats/${chatId}/archive`),
+    getSessionChat: (sessionId) => api.get(`/chat/sessions/${sessionId}/chat`),
+    getOnlineUsers: () => api.get('/chat/online-users'),
+    markAsRead: (chatId, messageId) => api.put(`/chat/chats/${chatId}/read`, { messageId }),
+};
+
 export default api;
