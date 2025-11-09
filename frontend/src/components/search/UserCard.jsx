@@ -93,38 +93,40 @@ const UserCard = ({ user, onBookSession, className = "" }) => {
     const availabilityStatus = getAvailabilityStatus(user.availability);
 
     return (
-        <div
-            className={`bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md 
-                       transition-shadow cursor-pointer ${className}`}
+        <article
+            className={`bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-md 
+                       transition-shadow cursor-pointer active:scale-[0.98] ${className}`}
             onClick={handleViewProfile}
+            role="article"
+            aria-label={`${user.firstName} ${user.lastName}'s profile`}
         >
             {/* Header */}
-            <div className="flex items-start space-x-4 mb-4">
+            <div className="flex items-start space-x-3 sm:space-x-4 mb-4">
                 {/* Avatar */}
                 <div className="flex-shrink-0">
                     {user.avatar ? (
                         <img
                             src={user.avatar}
-                            alt={`${user.firstName} ${user.lastName}`}
-                            className="h-16 w-16 rounded-full object-cover border-2 border-gray-200"
+                            alt=""
+                            className="h-12 w-12 sm:h-16 sm:w-16 rounded-full object-cover border-2 border-gray-200"
                         />
                     ) : (
-                        <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center 
-                                      justify-center border-2 border-gray-200">
-                            <UserIcon className="h-8 w-8 text-gray-400" />
+                        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-gray-200 flex items-center 
+                                      justify-center border-2 border-gray-200" aria-hidden="true">
+                            <UserIcon className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
                         </div>
                     )}
                 </div>
 
                 {/* User Info */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                    <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                                 {user.firstName} {user.lastName}
                             </h3>
                             {user.title && (
-                                <p className="text-sm text-gray-600 truncate">
+                                <p className="text-xs sm:text-sm text-gray-600 truncate">
                                     {user.title}
                                 </p>
                             )}
@@ -132,8 +134,8 @@ const UserCard = ({ user, onBookSession, className = "" }) => {
 
                         {/* Online Status */}
                         {user.isOnline && (
-                            <div className="flex items-center space-x-1">
-                                <div className="h-2 w-2 bg-green-400 rounded-full"></div>
+                            <div className="flex items-center space-x-1 flex-shrink-0">
+                                <div className="h-2 w-2 bg-green-400 rounded-full" aria-hidden="true"></div>
                                 <span className="text-xs text-green-600">Online</span>
                             </div>
                         )}
@@ -141,7 +143,7 @@ const UserCard = ({ user, onBookSession, className = "" }) => {
 
                     {/* Rating */}
                     {user.rating && user.rating.count > 0 && (
-                        <div className="mt-2">
+                        <div className="mt-2" aria-label={`Rating: ${user.rating.average.toFixed(1)} out of 5 stars, ${user.rating.count} reviews`}>
                             {renderStars(user.rating.average, user.rating.count)}
                         </div>
                     )}
@@ -212,26 +214,33 @@ const UserCard = ({ user, onBookSession, className = "" }) => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <button
+                    type="button"
                     onClick={handleBookSession}
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md 
-                             hover:bg-blue-700 transition-colors text-sm font-medium
-                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="flex-1 bg-blue-600 text-white px-4 py-2.5 sm:py-2 rounded-md 
+                             hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm font-medium
+                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                             touch-manipulation"
+                    aria-label={`Book a session with ${user.firstName} ${user.lastName}`}
                 >
                     Book Session
                 </button>
 
                 <button
+                    type="button"
                     onClick={handleStartChat}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md 
-                             hover:bg-gray-50 transition-colors text-sm font-medium
-                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="sm:w-auto px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-md 
+                             hover:bg-gray-50 active:bg-gray-100 transition-colors text-sm font-medium
+                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                             touch-manipulation flex items-center justify-center sm:justify-start gap-2"
+                    aria-label={`Start chat with ${user.firstName} ${user.lastName}`}
                 >
-                    <ChatBubbleLeftRightIcon className="h-4 w-4" />
+                    <ChatBubbleLeftRightIcon className="h-4 w-4" aria-hidden="true" />
+                    <span className="sm:sr-only">Message</span>
                 </button>
             </div>
-        </div>
+        </article>
     );
 };
 

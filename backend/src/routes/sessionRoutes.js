@@ -2,6 +2,7 @@ const express = require('express');
 const SessionController = require('../controllers/sessionController');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const { handleJoiError } = require('../middleware/errorHandler');
+const { bookingLimiter } = require('../middleware/rateLimiter');
 const Joi = require('joi');
 
 const router = express.Router();
@@ -164,6 +165,7 @@ const validateObjectId = (paramName) => {
 // @access  Private
 router.post('/',
     authenticateToken,
+    bookingLimiter,
     validate(createSessionSchema),
     SessionController.createSession
 );

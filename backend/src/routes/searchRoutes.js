@@ -1,6 +1,7 @@
 const express = require('express');
 const SearchController = require('../controllers/searchController');
 const { authenticateToken } = require('../middleware/authMiddleware');
+const { searchLimiter } = require('../middleware/rateLimiter');
 const Joi = require('joi');
 
 const router = express.Router();
@@ -117,6 +118,7 @@ const validateTrending = (req, res, next) => {
 // @desc    Search users by skills with filters and pagination
 // @access  Public (but could be protected if needed)
 router.get('/users',
+    searchLimiter,
     validateSearchUsers,
     SearchController.searchUsers
 );
@@ -125,6 +127,7 @@ router.get('/users',
 // @desc    Get available skills for autocomplete
 // @access  Public
 router.get('/skills',
+    searchLimiter,
     validateSkills,
     SearchController.getAvailableSkills
 );
@@ -133,6 +136,7 @@ router.get('/skills',
 // @desc    Get available skill categories
 // @access  Public
 router.get('/categories',
+    searchLimiter,
     SearchController.getSkillCategories
 );
 
@@ -140,6 +144,7 @@ router.get('/categories',
 // @desc    Get search suggestions based on user input
 // @access  Public
 router.get('/suggestions',
+    searchLimiter,
     validateSuggestions,
     SearchController.getSearchSuggestions
 );

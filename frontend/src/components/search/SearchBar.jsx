@@ -146,12 +146,21 @@ const SearchBar = ({ onSearch, placeholder = "Search for skills or users...", cl
     return (
         <div ref={searchRef} className={`relative ${className}`}>
             <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <label htmlFor="search-input" className="sr-only">
+                    Search for skills or users
+                </label>
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
                     <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                 </div>
 
                 <input
-                    type="text"
+                    id="search-input"
+                    type="search"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={showSuggestions && suggestions.length > 0}
+                    aria-controls="search-suggestions"
+                    aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
                     value={query}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
@@ -169,12 +178,14 @@ const SearchBar = ({ onSearch, placeholder = "Search for skills or users...", cl
 
                 {query && (
                     <button
+                        type="button"
                         onClick={clearSearch}
                         className="absolute inset-y-0 right-0 pr-3 flex items-center 
-                                 text-gray-400 hover:text-gray-600 transition-colors"
+                                 text-gray-400 hover:text-gray-600 transition-colors
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
                         aria-label="Clear search"
                     >
-                        <XMarkIcon className="h-5 w-5" />
+                        <XMarkIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                 )}
             </div>
@@ -182,26 +193,37 @@ const SearchBar = ({ onSearch, placeholder = "Search for skills or users...", cl
             {/* Suggestions dropdown */}
             {(showSuggestions || isLoading) && (
                 <div
+                    id="search-suggestions"
                     ref={suggestionsRef}
+                    role="listbox"
+                    aria-label="Search suggestions"
                     className="absolute z-50 w-full mt-1 bg-white border border-gray-200 
                              rounded-lg shadow-lg max-h-64 overflow-y-auto"
                 >
                     {isLoading ? (
-                        <div className="px-4 py-3 text-center text-gray-500">
-                            <div className="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2"></div>
+                        <div className="px-4 py-3 text-center text-gray-500" role="status" aria-live="polite">
+                            <div className="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2" aria-hidden="true"></div>
                             Searching...
                         </div>
                     ) : suggestions.length > 0 ? (
                         <ul className="py-1">
                             {suggestions.map((suggestion, index) => (
-                                <li key={`${suggestion.type}-${suggestion.text}-${index}`}>
+                                <li
+                                    key={`${suggestion.type}-${suggestion.text}-${index}`}
+                                    role="option"
+                                    id={`suggestion-${index}`}
+                                    aria-selected={index === selectedIndex}
+                                >
                                     <button
+                                        type="button"
                                         onClick={() => handleSuggestionClick(suggestion)}
                                         className={`w-full px-4 py-2 text-left hover:bg-gray-50 
                                                   flex items-center space-x-3 transition-colors
+                                                  focus:outline-none focus:bg-gray-50
                                                   ${index === selectedIndex ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
+                                        aria-label={`${suggestion.text}, ${suggestion.type}${suggestion.count ? `, ${suggestion.count} results` : ''}`}
                                     >
-                                        <span className="text-lg">
+                                        <span className="text-lg" aria-hidden="true">
                                             {getSuggestionIcon(suggestion.type)}
                                         </span>
                                         <div className="flex-1 min-w-0">
@@ -216,7 +238,7 @@ const SearchBar = ({ onSearch, placeholder = "Search for skills or users...", cl
                                         </div>
                                         {suggestion.count && (
                                             <span className="text-xs text-gray-400 bg-gray-100 
-                                                           px-2 py-1 rounded-full">
+                                                           px-2 py-1 rounded-full" aria-hidden="true">
                                                 {suggestion.count}
                                             </span>
                                         )}
@@ -225,7 +247,7 @@ const SearchBar = ({ onSearch, placeholder = "Search for skills or users...", cl
                             ))}
                         </ul>
                     ) : query.trim().length >= 2 ? (
-                        <div className="px-4 py-3 text-center text-gray-500">
+                        <div className="px-4 py-3 text-center text-gray-500" role="status">
                             No suggestions found
                         </div>
                     ) : null}

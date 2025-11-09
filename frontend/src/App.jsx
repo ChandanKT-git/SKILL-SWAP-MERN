@@ -23,7 +23,7 @@ function App() {
         <AuthProvider>
             <SocketProvider>
                 <div className="min-h-screen bg-gray-50">
-                    <Routes>
+                    <Routes id="main-content">
                         {/* Public routes */}
                         <Route path="/" element={
                             <div>

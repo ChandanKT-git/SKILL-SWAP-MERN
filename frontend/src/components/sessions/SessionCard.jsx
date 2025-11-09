@@ -127,20 +127,27 @@ function SessionCard({ session, onUpdate, onDelete }) {
 
     return (
         <>
-            <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-                <div className="p-6">
+            <article
+                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow"
+                aria-label={`Session for ${session.skill.name} with ${isRequester ? session.provider.firstName : session.requester.firstName}`}
+            >
+                <div className="p-4 sm:p-6">
                     {/* Header */}
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-lg font-semibold text-gray-900">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+                        <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                                     {session.skill.name}
                                 </h3>
-                                <span className={cn(
-                                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border',
-                                    statusConfig.color
-                                )}>
-                                    <span className="mr-1">{statusConfig.icon}</span>
+                                <span
+                                    className={cn(
+                                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border',
+                                        statusConfig.color
+                                    )}
+                                    role="status"
+                                    aria-label={`Session status: ${statusConfig.label}`}
+                                >
+                                    <span className="mr-1" aria-hidden="true">{statusConfig.icon}</span>
                                     {statusConfig.label}
                                 </span>
                             </div>
@@ -156,42 +163,43 @@ function SessionCard({ session, onUpdate, onDelete }) {
                         </div>
 
                         {isUpcoming && (
-                            <div className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
+                            <div className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-sm font-medium self-start">
                                 Upcoming
                             </div>
                         )}
                     </div>
 
                     {/* Session Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                         <div className="space-y-2">
                             <div className="flex items-center text-sm text-gray-600">
-                                <span className="mr-2">📅</span>
-                                <span>{formatDate(session.scheduledDate)}</span>
+                                <span className="mr-2" aria-hidden="true">📅</span>
+                                <time dateTime={session.scheduledDate}>{formatDate(session.scheduledDate)}</time>
                             </div>
                             <div className="flex items-center text-sm text-gray-600">
-                                <span className="mr-2">⏱️</span>
+                                <span className="mr-2" aria-hidden="true">⏱️</span>
                                 <span>{formatDuration(session.duration)}</span>
                             </div>
                             <div className="flex items-center text-sm text-gray-600">
-                                <span className="mr-2">{getSessionTypeIcon(session.sessionType)}</span>
+                                <span className="mr-2" aria-hidden="true">{getSessionTypeIcon(session.sessionType)}</span>
                                 <span className="capitalize">{session.sessionType}</span>
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <div className="flex items-center text-sm text-gray-600">
-                                <span className="mr-2">🎯</span>
+                                <span className="mr-2" aria-hidden="true">🎯</span>
                                 <span>{session.skill.category} • {session.skill.level}</span>
                             </div>
                             {session.meetingLink && (
                                 <div className="flex items-center text-sm text-gray-600">
-                                    <span className="mr-2">🔗</span>
+                                    <span className="mr-2" aria-hidden="true">🔗</span>
                                     <a
                                         href={session.meetingLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-primary-600 hover:text-primary-700 underline truncate"
+                                        className="text-primary-600 hover:text-primary-700 underline truncate focus-visible-ring rounded"
+                                        aria-label="Open meeting link in new tab"
                                     >
                                         Meeting Link
                                     </a>
@@ -199,7 +207,7 @@ function SessionCard({ session, onUpdate, onDelete }) {
                             )}
                             {session.location && (
                                 <div className="flex items-center text-sm text-gray-600">
-                                    <span className="mr-2">📍</span>
+                                    <span className="mr-2" aria-hidden="true">📍</span>
                                     <span className="truncate">{session.location}</span>
                                 </div>
                             )}
@@ -232,11 +240,12 @@ function SessionCard({ session, onUpdate, onDelete }) {
                     )}
 
                     {/* Actions */}
-                    <div className="flex flex-wrap gap-2 pt-4 border-t">
+                    <div className="flex flex-wrap gap-2 pt-4 border-t" role="group" aria-label="Session actions">
                         {canRespond && (
                             <Button
                                 size="sm"
                                 onClick={() => setShowResponseModal(true)}
+                                aria-label="Respond to session request"
                             >
                                 Respond
                             </Button>
@@ -248,6 +257,7 @@ function SessionCard({ session, onUpdate, onDelete }) {
                                 variant="outline"
                                 onClick={handleCompleteSession}
                                 loading={loading}
+                                aria-label="Mark session as complete"
                             >
                                 Mark Complete
                             </Button>
@@ -260,6 +270,7 @@ function SessionCard({ session, onUpdate, onDelete }) {
                                 onClick={handleCancelSession}
                                 loading={loading}
                                 className="text-red-600 border-red-300 hover:bg-red-50"
+                                aria-label="Cancel session"
                             >
                                 Cancel
                             </Button>
@@ -273,6 +284,7 @@ function SessionCard({ session, onUpdate, onDelete }) {
                                     // This would open a review modal - placeholder for now
                                     toast.info('Review functionality will be implemented in the next task');
                                 }}
+                                aria-label="Leave a review for this session"
                             >
                                 Leave Review
                             </Button>
@@ -283,13 +295,14 @@ function SessionCard({ session, onUpdate, onDelete }) {
                                 size="sm"
                                 variant="primary"
                                 onClick={() => window.open(session.meetingLink, '_blank')}
+                                aria-label="Join meeting in new tab"
                             >
                                 Join Meeting
                             </Button>
                         )}
                     </div>
                 </div>
-            </div>
+            </article>
 
             {/* Response Modal */}
             {showResponseModal && (

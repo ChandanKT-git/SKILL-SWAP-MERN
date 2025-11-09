@@ -1,7 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const http = require('http');
 
 // Import configuration and utilities
@@ -15,53 +13,38 @@ const {
 } = require('./middleware/errorHandler');
 const EnvManager = require('./utils/env');
 const socketService = require('./services/socketService');
+const { runDatabaseOptimization } = require('./utils/databaseOptimization');
+
+// Import security middleware
+const {
+    helmetConfig,
+    corsOptions,
+    sanitizeMiddleware,
+    securityHeaders,
+    preventParameterPollution,
+    suspiciousActivityDetector,
+    validateContentType,
+} = require('./middleware/security');
+
+// Import rate limiters
+const { generalLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
 // Trust proxy for accurate IP addresses
 app.set('trust proxy', 1);
 
-// Security middleware
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            scriptSrc: ["'self'"],
-            imgSrc: ["'self'", "data:", "https:"],
-        },
-    },
-    crossOriginEmbedderPolicy: false,
-}));
+// Security middleware - helmet with enhanced configuration
+app.use(helmetConfig);
 
-app.use(cors({
-    origin: [
-        config.frontendUrl,
-        'http://127.0.0.1:5500',
-        'http://localhost:5500',
-        'http://127.0.0.1:5501',
-        'http://localhost:5501'
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+// CORS with enhanced configuration
+app.use(cors(corsOptions));
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: config.rateLimit.windowMs,
-    max: config.rateLimit.maxRequests,
-    message: {
-        success: false,
-        error: {
-            message: 'Too many requests from this IP, please try again later.',
-            code: 'RATE_LIMIT_EXCEEDED',
-        },
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use('/api/', limiter);
+// Additional security headers
+app.use(securityHeaders);
+
+// General rate limiting for all API routes
+app.use('/api/', generalLimiter);
 
 // Logging middleware
 const loggingMiddleware = getLoggingMiddleware();
@@ -70,7 +53,7 @@ loggingMiddleware.forEach(middleware => app.use(middleware));
 // Static file serving for testing
 app.use(express.static('public'));
 
-// Body parsing middleware
+// Body parsing middleware with size limits
 app.use(express.json({
     limit: '10mb',
     verify: (req, res, buf) => {
@@ -78,6 +61,12 @@ app.use(express.json({
     },
 }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Security middleware - input sanitization and validation
+app.use(sanitizeMiddleware);
+app.use(preventParameterPollution);
+app.use(suspiciousActivityDetector);
+app.use(validateContentType);
 
 // Request ID middleware for tracking
 app.use((req, res, next) => {
@@ -120,6 +109,7 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const notificationRoutes = require('./routes/notifications');
 const adminRoutes = require('./routes/adminRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const healthRoutes = require('./routes/healthRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
@@ -129,6 +119,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/chats', chatRoutes);
+app.use('/api/health', healthRoutes);
 
 // Additional routes will be added here
 // app.use('/api/users', userRoutes);
@@ -165,6 +156,11 @@ async function startServer() {
     try {
         // Connect to database
         await database.connect();
+
+        // Run database optimization (create indexes)
+        if (config.nodeEnv !== 'test') {
+            await runDatabaseOptimization();
+        }
 
         // Start notification processor
         const notificationProcessor = require('./jobs/notificationProcessor');

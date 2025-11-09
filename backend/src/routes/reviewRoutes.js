@@ -2,6 +2,7 @@ const express = require('express');
 const ReviewController = require('../controllers/reviewController');
 const { authenticateToken, authorize } = require('../middleware/authMiddleware');
 const { handleJoiError } = require('../middleware/errorHandler');
+const { reviewLimiter } = require('../middleware/rateLimiter');
 const Joi = require('joi');
 
 const router = express.Router();
@@ -125,6 +126,7 @@ const validateObjectId = (paramName) => {
 // @access  Private
 router.post('/',
     authenticateToken,
+    reviewLimiter,
     validate(submitReviewSchema),
     ReviewController.submitReview
 );

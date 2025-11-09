@@ -51,6 +51,15 @@ export default {
                     '100%': { transform: 'translateY(0)', opacity: '1' },
                 },
             },
+            // Accessibility-focused spacing for touch targets
+            minHeight: {
+                'touch': '44px',
+                'touch-lg': '48px',
+            },
+            minWidth: {
+                'touch': '44px',
+                'touch-lg': '48px',
+            },
         },
     },
     plugins: [

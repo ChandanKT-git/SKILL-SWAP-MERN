@@ -9,6 +9,7 @@ const {
     updateSkillSchema,
     objectIdSchema,
 } = require('../validation/profileValidation');
+const { uploadLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -138,6 +139,7 @@ router.delete(
 router.post(
     '/image',
     authenticateToken,
+    uploadLimiter,
     cleanupOnError,
     uploadSingle('profileImage'),
     ProfileController.uploadProfileImage

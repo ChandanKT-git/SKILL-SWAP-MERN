@@ -9,6 +9,7 @@ const {
     refreshTokenSchema,
 } = require('../validation/authValidation');
 const { authenticateToken } = require('../middleware/authMiddleware');
+const { authLimiter, loginLimiter, otpLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -38,28 +39,28 @@ const validate = (schema) => {
  * @desc Register a new user
  * @access Public
  */
-router.post('/register', validate(registerSchema), AuthController.register);
+router.post('/register', authLimiter, validate(registerSchema), AuthController.register);
 
 /**
  * @route POST /api/auth/verify-otp
  * @desc Verify OTP and complete email verification
  * @access Public
  */
-router.post('/verify-otp', validate(verifyOTPSchema), AuthController.verifyOTP);
+router.post('/verify-otp', otpLimiter, validate(verifyOTPSchema), AuthController.verifyOTP);
 
 /**
  * @route POST /api/auth/resend-otp
  * @desc Resend OTP verification code
  * @access Public
  */
-router.post('/resend-otp', validate(resendOTPSchema), AuthController.resendOTP);
+router.post('/resend-otp', otpLimiter, validate(resendOTPSchema), AuthController.resendOTP);
 
 /**
  * @route POST /api/auth/login
  * @desc User login
  * @access Public
  */
-router.post('/login', validate(loginSchema), AuthController.login);
+router.post('/login', loginLimiter, validate(loginSchema), AuthController.login);
 
 /**
  * @route POST /api/auth/refresh-token
